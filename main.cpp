@@ -15,14 +15,15 @@ enum SelectedMenu {
     AVAILABILITY_TABLE,
 };
 
-void printMainMenu() {
-    cout << "\n\n\n";
+void printMainMenu(const string& erro = "") {
+    system("clear");
     cout << "===== Marido de Aluguel =====";
-    cout << "\n\n selecione o menu desejado:";
+    cout << "\n\nSelecione o menu desejado:";
     cout << "\n1- Contratar serviços";
     cout << "\n2- Checar disponibilidade";
     cout << "\n0- Sair";
-    cout << "\n  R: ";
+    if (!erro.empty()) cout << "\n\n  ! " << erro;
+    cout << "\n\n  R: ";
 }
 
 int main() {
@@ -30,13 +31,16 @@ int main() {
     CSVManager::carregarTrabalhos("data/trabalhos.csv", trabalhadores);
 
     int tempInput;
+    string erro = "";
 
     do {
-        printMainMenu();
+        printMainMenu(erro);
+        erro = "";
+
         if (!(cin >> tempInput) || tempInput < 0 || tempInput > 2) {
             cin.clear();
             cin.ignore(1000, '\n');
-            cout << "\nOpção inválida. Tente novamente.";
+            erro = "Opção inválida. Tente novamente.";
             continue;
         }
 
@@ -44,7 +48,7 @@ int main() {
 
         switch (static_cast<SelectedMenu>(tempInput - 1)) {
             case HIRE_MENU:
-                // TODO: menuContratacao(trabalhadores)
+                menuContratacao(trabalhadores);
                 break;
             case AVAILABILITY_TABLE:
                 menuDisponibilidade(trabalhadores);

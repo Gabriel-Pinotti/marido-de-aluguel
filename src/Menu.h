@@ -3,3 +3,4 @@
 #include <vector>
 
 void menuDisponibilidade(std::vector<Trabalhador>& trabalhadores);
+void menuContratacao(std::vector<Trabalhador>& trabalhadores);
