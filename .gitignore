@@ -2,3 +2,6 @@
 *.docx#
 *.png
 *.log
+*.out
+*.html
+todo.md

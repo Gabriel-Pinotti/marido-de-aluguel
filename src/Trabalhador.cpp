@@ -9,6 +9,14 @@ Trabalho Trabalhador::contratar(Cliente& c, Data d, Habilidade h) {
     return t;
 }
 
+void Trabalhador::adicionarTrabalho(const Trabalho& t) {
+    trabalhos.push_back(t);
+}
+
+const std::vector<Trabalho>& Trabalhador::getTrabalhos() const {
+    return trabalhos;
+}
+
 bool Trabalhador::estaLivre(Data d) const {
     for (const auto& t : trabalhos) {
         if (t.getDataInicio() == d) return false;

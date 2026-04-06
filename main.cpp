@@ -5,6 +5,7 @@
 #include "src/Cliente.h"
 #include "src/Trabalho.h"
 #include "src/Trabalhador.h"
+#include "src/CSVManager.h"
 
 enum SelectedMenu {
     HIRE_MENU,
@@ -23,7 +24,7 @@ void printMainMenu() {
 // -- Global variables
 SelectedMenu userMenuSelection;
 
-int main() { // TODO Gabriel - modularizar
+int main() {
     printMainMenu();
     int tempInput;
     std::cin >> tempInput;
