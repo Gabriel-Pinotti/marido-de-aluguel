@@ -13,6 +13,7 @@ using namespace std;
 enum SelectedMenu {
     HIRE_MENU,
     AVAILABILITY_TABLE,
+    REGISTER_WORKER,
 };
 
 void printMainMenu(const string& erro = "") {
@@ -21,6 +22,7 @@ void printMainMenu(const string& erro = "") {
     cout << "\n\nSelecione o menu desejado:";
     cout << "\n1- Contratar serviços";
     cout << "\n2- Checar disponibilidade";
+    cout << "\n3- Cadastrar trabalhador";
     cout << "\n0- Sair";
     if (!erro.empty()) cout << "\n\n  ! " << erro;
     cout << "\n\n  R: ";
@@ -37,7 +39,7 @@ int main() {
         printMainMenu(erro);
         erro = "";
 
-        if (!(cin >> tempInput) || tempInput < 0 || tempInput > 2) {
+        if (!(cin >> tempInput) || tempInput < 0 || tempInput > 3) {
             cin.clear();
             cin.ignore(1000, '\n');
             erro = "Opção inválida. Tente novamente.";
@@ -52,6 +54,10 @@ int main() {
                 break;
             case AVAILABILITY_TABLE:
                 menuDisponibilidade(trabalhadores);
+                break;
+            case REGISTER_WORKER:
+                cin.ignore(1000, '\n');
+                menuCadastrarTrabalhador(trabalhadores);
                 break;
         }
 

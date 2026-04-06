@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 using namespace std;
 
 // TODO Gabriel - adicionar isso tudo ao draw.io (ps: misericórdia)
@@ -68,14 +69,22 @@ void CSVManager::carregarTrabalhos(const string& caminho, vector<Trabalhador>& t
         auto col = split(linha, ',');
         if (col.size() < 8) continue;
 
-        int dia  = stoi(col[0]);
-        int mes  = stoi(col[1]);
-        int ano  = stoi(col[2]);
+        int dia, mes, ano;
+        float valorHab;
+        try {
+            dia      = stoi(col[0]);
+            mes      = stoi(col[1]);
+            ano      = stoi(col[2]);
+            valorHab = stof(col[7]);
+        } catch (...) {
+            cerr << "Aviso: linha ignorada por dados inválidos: " << linha << "\n";
+            continue;
+        }
+
         string cpfTrabalhador = col[3];
         string nomeCliente    = col[4];
         string cpfCliente     = col[5];
         string nomeHab        = col[6];
-        float valorHab             = stof(col[7]);
 
         Data data(dia, mes, ano);
         Cliente cliente(nomeCliente, cpfCliente, 0.0f);
@@ -88,6 +97,25 @@ void CSVManager::carregarTrabalhos(const string& caminho, vector<Trabalhador>& t
                 break;
             }
         }
+    }
+}
+
+void CSVManager::salvarTrabalhadores(const string& caminho, const vector<Trabalhador>& trabalhadores) {
+    ofstream arquivo(caminho);
+
+    if (!arquivo.is_open()) {
+        cerr << "Erro: nao foi possivel abrir " << caminho << "\n";
+        return;
+    }
+
+    arquivo << "nome,cpf,habilidades\n";
+    for (const auto& t : trabalhadores) {
+        arquivo << t.nomeCompleto << "," << t.cpf << ",";
+        for (size_t i = 0; i < t.habilidades.size(); i++) {
+            arquivo << t.habilidades[i].nome << ":" << fixed << setprecision(2) << t.habilidades[i].valorOperacao;
+            if (i + 1 < t.habilidades.size()) arquivo << ":";
+        }
+        arquivo << "\n";
     }
 }
 
