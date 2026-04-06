@@ -5,8 +5,6 @@
 #include <iomanip>
 using namespace std;
 
-// TODO Gabriel - adicionar isso tudo ao draw.io (ps: misericórdia)
-
 static vector<string> split(const string& linha, char delim) {
     vector<string> partes;
     stringstream ss(linha);
