@@ -8,8 +8,12 @@
 #include <algorithm>
 using namespace std;
 
-static void limparTela() {
+void limparTela() {
+#ifdef _WIN32
+    system("cls");
+#else
     system("clear");
+#endif
 }
 
 static string trim(const string& s) {

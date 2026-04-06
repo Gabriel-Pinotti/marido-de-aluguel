@@ -17,7 +17,7 @@ enum SelectedMenu {
 };
 
 void printMainMenu(const string& erro = "") {
-    system("clear");
+    limparTela();
     cout << "===== Marido de Aluguel =====";
     cout << "\n\nSelecione o menu desejado:";
     cout << "\n1- Contratar serviços";
