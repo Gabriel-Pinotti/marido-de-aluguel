@@ -1,6 +1,7 @@
 #include "Trabalhador.h"
+using namespace std;
 
-Trabalhador::Trabalhador(std::string nomeCompleto, std::string cpf, std::vector<Habilidade> habilidades)
+Trabalhador::Trabalhador(string nomeCompleto, string cpf, vector<Habilidade> habilidades)
     : Pessoa(nomeCompleto, cpf), habilidades(habilidades) {}
 
 Trabalho Trabalhador::contratar(Cliente& c, Data d, Habilidade h) {
@@ -13,7 +14,7 @@ void Trabalhador::adicionarTrabalho(const Trabalho& t) {
     trabalhos.push_back(t);
 }
 
-const std::vector<Trabalho>& Trabalhador::getTrabalhos() const {
+const vector<Trabalho>& Trabalhador::getTrabalhos() const {
     return trabalhos;
 }
 

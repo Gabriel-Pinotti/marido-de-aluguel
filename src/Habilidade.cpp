@@ -1,4 +1,5 @@
 #include "Habilidade.h"
+using namespace std;
 
-Habilidade::Habilidade(std::string nome, float valorOperacao)
+Habilidade::Habilidade(string nome, float valorOperacao)
     : nome(nome), valorOperacao(valorOperacao) {}

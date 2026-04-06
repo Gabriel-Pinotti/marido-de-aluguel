@@ -1,4 +1,5 @@
 #include "Pessoa.h"
+using namespace std;
 
-Pessoa::Pessoa(std::string nomeCompleto, std::string cpf)
+Pessoa::Pessoa(string nomeCompleto, string cpf)
     : nomeCompleto(nomeCompleto), cpf(cpf) {}

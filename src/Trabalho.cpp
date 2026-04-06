@@ -1,4 +1,5 @@
 #include "Trabalho.h"
+using namespace std;
 
 Trabalho::Trabalho(Data d, Cliente c, Habilidade h)
     : dataInicio(d), cliente(c), habilidade(h) {}

@@ -1,6 +1,7 @@
 #include "Cliente.h"
+using namespace std;
 
-Cliente::Cliente(std::string nomeCompleto, std::string cpf, float dinheiro)
+Cliente::Cliente(string nomeCompleto, string cpf, float dinheiro)
     : Pessoa(nomeCompleto, cpf), dinheiro(dinheiro) {}
 
 float Cliente::quantosReais() const {
