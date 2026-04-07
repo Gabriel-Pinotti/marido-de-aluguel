@@ -3,7 +3,15 @@
 ![C++](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=c%2B%2B&logoColor=white)
 ![CURSO](https://img.shields.io/badge/Matéria-OOP-blueviolet)
 
+> O repositório contém o código fonte do projeto e o diagrama no arquivo `diagrama.drawio`, acesso em [draw.io](https://app.diagrams.net/)
+
 ---
+
+## Alunos
+
+- Gabriel de Aquino Pinotti
+- Gustado do Amaral
+- Leandro Mattos
 
 ## Funcionalidades
 
@@ -18,6 +26,7 @@
 ```
 marido-de-aluguel/
 ├── main.cpp
+├── diagrama.drawio → diagrama UML, acesso em https://app.diagrams.net/
 ├── src/
 │   ├── Pessoa.h / Pessoa.cpp
 │   ├── Cliente.h / Cliente.cpp
