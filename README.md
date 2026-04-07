@@ -19,10 +19,10 @@
 marido-de-aluguel/
 ├── main.cpp
 ├── src/
-│   ├── Pessoa.h / Pessoa.cpp        # Classe base
-│   ├── Cliente.h / Cliente.cpp      # Herda de Pessoa
-│   ├── Trabalhador.h / Trabalhador.cpp  # Herda de Pessoa; agrega Habilidade, compõe Trabalho
-│   ├── Trabalho.h / Trabalho.cpp    # Registro de serviço contratado
+│   ├── Pessoa.h / Pessoa.cpp
+│   ├── Cliente.h / Cliente.cpp
+│   ├── Trabalhador.h / Trabalhador.cpp 
+│   ├── Trabalho.h / Trabalho.cpp
 │   ├── Habilidade.h / Habilidade.cpp
 │   ├── Data.h / Data.cpp
 │   ├── CSVManager.h / CSVManager.cpp
