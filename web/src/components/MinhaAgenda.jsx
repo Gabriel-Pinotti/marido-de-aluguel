@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
 import { brl, dataStr } from "../util.js";
+import BotaoCancelar from "./BotaoCancelar.jsx";
 
-export default function MinhaAgenda({ usuario, trabalhos }) {
+export default function MinhaAgenda({ usuario, trabalhos, onAtualizar }) {
   const meus = useMemo(
     () =>
       trabalhos
@@ -35,6 +36,7 @@ export default function MinhaAgenda({ usuario, trabalhos }) {
               <span className="hab-celula">{w.habilidade}</span>
               <span className="cliente-celula">Cliente: {w.nomeCliente}</span>
               <span className="valor-celula">{brl(w.valor)}</span>
+              <BotaoCancelar trabalho={w} onCancelado={onAtualizar} />
             </li>
           ))}
         </ul>

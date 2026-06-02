@@ -99,13 +99,14 @@ export default function App() {
           <Disponibilidade trabalhadores={trabalhadores} trabalhos={trabalhos} />
         )}
         {abaAtual === "agenda" && (
-          <MinhaAgenda usuario={usuario} trabalhos={trabalhos} />
+          <MinhaAgenda usuario={usuario} trabalhos={trabalhos} onAtualizar={recarregar} />
         )}
         {abaAtual === "meus-dados" && (
           <MeusDados
             usuario={usuario}
             trabalhadores={trabalhadores}
             trabalhos={trabalhos}
+            onAtualizar={recarregar}
           />
         )}
       </main>

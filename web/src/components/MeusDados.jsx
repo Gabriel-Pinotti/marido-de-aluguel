@@ -1,7 +1,11 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { brl, dataStr } from "../util.js";
+import { editarTrabalhador } from "../api.js";
+import BotaoCancelar from "./BotaoCancelar.jsx";
 
-export default function MeusDados({ usuario, trabalhadores, trabalhos }) {
+const habVazia = () => ({ nome: "", valor: "" });
+
+export default function MeusDados({ usuario, trabalhadores, trabalhos, onAtualizar }) {
   const ehCliente = usuario.papel === "cliente";
 
   // histórico de contratações do cliente (com nome do profissional)
@@ -22,6 +26,37 @@ export default function MeusDados({ usuario, trabalhadores, trabalhos }) {
   }, [ehCliente, trabalhadores, usuario.cpf]);
 
   const totalGasto = historico.reduce((s, w) => s + w.valor, 0);
+
+  // --- edição de habilidades (trabalhador) ---
+  const [editando, setEditando] = useState(false);
+  const [habs, setHabs] = useState([]);
+  const [erro, setErro] = useState("");
+
+  function abrirEdicao() {
+    setHabs(minhasHabilidades.map((h) => ({ nome: h.nome, valor: String(h.valor) })));
+    setErro("");
+    setEditando(true);
+  }
+  const setHab = (i, campo, valor) =>
+    setHabs((hs) => hs.map((h, j) => (j === i ? { ...h, [campo]: valor } : h)));
+  const addHab = () => setHabs((hs) => [...hs, habVazia()]);
+  const removeHab = (i) =>
+    setHabs((hs) => (hs.length > 1 ? hs.filter((_, j) => j !== i) : hs));
+
+  async function salvar(e) {
+    e.preventDefault();
+    setErro("");
+    const limpas = habs
+      .filter((h) => h.nome.trim() !== "" || String(h.valor).trim() !== "")
+      .map((h) => ({ nome: h.nome.trim(), valor: Number(h.valor) }));
+    try {
+      await editarTrabalhador(usuario.cpf, limpas);
+      setEditando(false);
+      onAtualizar();
+    } catch (err) {
+      setErro(err.message);
+    }
+  }
 
   return (
     <section className="card">
@@ -55,6 +90,7 @@ export default function MeusDados({ usuario, trabalhadores, trabalhos }) {
                   <span className="hab-celula">{w.habilidade}</span>
                   <span className="cliente-celula">com {w.profissional}</span>
                   <span className="valor-celula">{brl(w.valor)}</span>
+                  <BotaoCancelar trabalho={w} onCancelado={onAtualizar} />
                 </li>
               ))}
             </ul>
@@ -62,8 +98,59 @@ export default function MeusDados({ usuario, trabalhadores, trabalhos }) {
         </>
       ) : (
         <>
-          <h3>Minhas habilidades</h3>
-          {minhasHabilidades.length === 0 ? (
+          <div className="secao-titulo">
+            <h3>Minhas habilidades</h3>
+            {!editando && (
+              <button className="secundario" onClick={abrirEdicao}>Editar</button>
+            )}
+          </div>
+
+          {editando ? (
+            <form onSubmit={salvar}>
+              <fieldset className="habilidades">
+                <legend>Habilidades</legend>
+                {habs.map((h, i) => (
+                  <div key={i} className="hab-linha">
+                    <input
+                      placeholder="habilidade"
+                      value={h.nome}
+                      onChange={(e) => setHab(i, "nome", e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      placeholder="valor (R$)"
+                      min="0"
+                      step="0.01"
+                      value={h.valor}
+                      onChange={(e) => setHab(i, "valor", e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="remover"
+                      onClick={() => removeHab(i)}
+                      disabled={habs.length === 1}
+                      title="remover"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                <button type="button" className="secundario" onClick={addHab}>
+                  + adicionar habilidade
+                </button>
+              </fieldset>
+              {erro && <p className="dica erro">{erro}</p>}
+              <div className="acoes">
+                <button className="primario" type="submit">Salvar</button>
+                <button className="secundario" type="button" onClick={() => setEditando(false)}>
+                  Cancelar
+                </button>
+              </div>
+              <p className="dica">
+                Editar não altera serviços já marcados — eles guardam o que foi contratado.
+              </p>
+            </form>
+          ) : minhasHabilidades.length === 0 ? (
             <p className="vazio">Nenhuma habilidade cadastrada.</p>
           ) : (
             <p className="habilidades-detalhe">

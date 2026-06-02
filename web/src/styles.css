@@ -138,7 +138,7 @@ legend { color: var(--suave); font-size: 0.85rem; padding: 0 6px; }
 
 .datas { list-style: none; padding: 0; margin: 0; }
 .datas li {
-  display: grid; grid-template-columns: 90px 130px 1fr auto; gap: 10px;
+  display: grid; grid-template-columns: 90px 120px 1fr auto auto; gap: 10px;
   align-items: center; padding: 7px 0; border-top: 1px solid var(--linha); font-size: 0.9rem;
 }
 .data-celula { font-variant-numeric: tabular-nums; }
@@ -153,6 +153,23 @@ legend { color: var(--suave); font-size: 0.85rem; padding: 0 6px; }
 }
 .resumo-faixa strong { color: var(--texto); }
 .capitalize { text-transform: capitalize; }
+
+.busca { margin-bottom: 14px; }
+
+.secao-titulo { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.secao-titulo h3 { margin: 22px 0 10px; }
+
+.acoes { display: flex; gap: 8px; margin-top: 4px; }
+
+.cancelar-btn {
+  background: transparent; border: 1px solid var(--linha); color: var(--suave);
+  padding: 3px 10px; border-radius: 7px; cursor: pointer; font-size: 0.8rem;
+}
+.cancelar-btn:hover:not(:disabled) { color: var(--erro); border-color: var(--erro); }
+.cancelar-btn:disabled { opacity: .5; cursor: not-allowed; }
+.cancel-bloq { color: var(--suave); font-size: 0.78rem; opacity: .6; text-align: right; }
+.cancel-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.cancel-wrap .dica { margin: 0; font-size: 0.72rem; text-align: right; }
 
 .hab-linha { display: grid; grid-template-columns: 1fr 140px 38px; gap: 8px; margin-bottom: 8px; }
 .remover {

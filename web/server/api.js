@@ -119,6 +119,11 @@ export function maridoApiPlugin() {
           if (req.method === "GET" && url === "/api/clientes")
             return await executar(res, ["list", "clientes"], 200);
 
+          if (req.method === "GET" && url === "/api/trabalhadores/busca") {
+            const q = new URLSearchParams(req.url.split("?")[1] || "").get("q") || "";
+            return await executar(res, ["buscar-trabalhadores", q], 200);
+          }
+
           if (req.method === "POST" && url === "/api/trabalhadores") {
             const b = await lerCorpo(req);
             return await executar(
@@ -146,6 +151,33 @@ export function maridoApiPlugin() {
                 String(b.cpfCliente ?? ""),
               ],
               201
+            );
+          }
+
+          if (req.method === "PUT" && url === "/api/trabalhadores") {
+            const b = await lerCorpo(req);
+            return await executar(
+              res,
+              ["editar-trabalhador", String(b.cpf ?? ""), habilidadesParaArg(b.habilidades)],
+              200
+            );
+          }
+          if (req.method === "DELETE" && url === "/api/trabalhos") {
+            const b = await lerCorpo(req);
+            const hoje = new Date();
+            return await executar(
+              res,
+              [
+                "cancelar-trabalho",
+                String(b.cpfTrabalhador ?? ""),
+                String(b.dia ?? ""),
+                String(b.mes ?? ""),
+                String(b.ano ?? ""),
+                String(hoje.getDate()),
+                String(hoje.getMonth() + 1),
+                String(hoje.getFullYear()),
+              ],
+              200
             );
           }
 
