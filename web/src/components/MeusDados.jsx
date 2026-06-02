@@ -42,7 +42,7 @@ export default function MeusDados({ usuario, trabalhadores, trabalhos }) {
               {historico.length === 1 ? "contratação" : "contratações"}
             </span>
             <span>
-              total gasto <strong>{brl(totalGasto)}</strong>
+              Total <strong>{brl(totalGasto)}</strong>
             </span>
           </div>
           {historico.length === 0 ? (

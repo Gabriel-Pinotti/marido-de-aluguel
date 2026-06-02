@@ -50,7 +50,7 @@ export default function Disponibilidade({ trabalhadores, trabalhos }) {
                         <li key={i}>
                           <span className="data-celula">{dataStr(w.dia, w.mes, w.ano)}</span>
                           <span className="hab-celula">{w.habilidade}</span>
-                          <span className="cliente-celula">cliente: {w.nomeCliente}</span>
+                          <span className="cliente-celula">Cliente: {w.nomeCliente}</span>
                         </li>
                       ))}
                     </ul>

@@ -96,12 +96,12 @@ export default function Login({ onLogin }) {
     <div className="login-tela">
       <div className={`login-card ${modo === "login" ? "modo-login" : "modo-registro"}`}>
         <header className="login-topo">
-          <span className="marca">Marido de Aluguel</span>
+          <span className="marca">Empreguetes</span>
           <h1>{modo === "login" ? "Bem-vindo de volta" : "Criar conta"}</h1>
           <p className="sub">
             {modo === "login"
-              ? "entre para continuar"
-              : "preencha seus dados para se cadastrar"}
+              ? "Entre para continuar"
+              : "Preencha seus dados para se cadastrar"}
           </p>
         </header>
 

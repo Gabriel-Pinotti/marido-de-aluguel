@@ -63,13 +63,12 @@ export default function App() {
     <div className="app">
       <header className="topo">
         <div>
-          <h1>Marido de Aluguel</h1>
-          <p className="sub">interface web · lê e grava direto em <code>data/</code></p>
+          <h1>Empreguetes</h1>
         </div>
         <div className="usuario">
           <span className="usuario-nome">{usuario.nome}</span>
           <span className="usuario-papel">{usuario.papel}</span>
-          <button className="logout" onClick={sair}>sair</button>
+          <button className="logout" onClick={sair}>Sair</button>
         </div>
       </header>
 

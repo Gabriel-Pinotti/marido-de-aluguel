@@ -21,7 +21,7 @@ export default function MinhaAgenda({ usuario, trabalhos }) {
           <strong>{meus.length}</strong> {meus.length === 1 ? "serviço agendado" : "serviços agendados"}
         </span>
         <span>
-          total a receber <strong>{brl(total)}</strong>
+          Total <strong>{brl(total)}</strong>
         </span>
       </div>
 
@@ -33,7 +33,7 @@ export default function MinhaAgenda({ usuario, trabalhos }) {
             <li key={i}>
               <span className="data-celula">{dataStr(w.dia, w.mes, w.ano)}</span>
               <span className="hab-celula">{w.habilidade}</span>
-              <span className="cliente-celula">cliente: {w.nomeCliente}</span>
+              <span className="cliente-celula">Cliente: {w.nomeCliente}</span>
               <span className="valor-celula">{brl(w.valor)}</span>
             </li>
           ))}
