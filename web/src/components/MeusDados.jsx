@@ -147,7 +147,7 @@ export default function MeusDados({ usuario, trabalhadores, trabalhos, onAtualiz
                 </button>
               </div>
               <p className="dica">
-                Editar não altera serviços já marcados — eles guardam o que foi contratado.
+                Serviços já registrados não serão alterados.
               </p>
             </form>
           ) : minhasHabilidades.length === 0 ? (

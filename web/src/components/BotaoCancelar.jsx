@@ -27,17 +27,14 @@ export default function BotaoCancelar({ trabalho, onCancelado }) {
     }
   }
 
-  if (!liberado) {
-    return (
-      <span className="cancel-bloq" title="Cancelamento só com mais de 7 dias de antecedência">
-        prazo encerrado
-      </span>
-    );
-  }
-
   return (
     <span className="cancel-wrap">
-      <button className="cancelar-btn" onClick={cancelar} disabled={enviando}>
+      <button
+        className="cancelar-btn"
+        onClick={cancelar}
+        disabled={!liberado || enviando}
+        title={liberado ? "Cancelar agendamento" : "Prazo encerrado"}
+      >
         cancelar
       </button>
       {erro && <span className="dica erro">{erro}</span>}
