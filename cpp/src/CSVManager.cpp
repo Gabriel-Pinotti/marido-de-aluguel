@@ -132,3 +132,31 @@ void CSVManager::salvarTrabalho(const string& caminho, const string& cpfTrabalha
             << h.getNome() << ","
             << h.getValor() << "\n";
 }
+
+vector<Cliente> CSVManager::carregarClientes(const string& caminho) {
+    vector<Cliente> clientes;
+    ifstream arquivo(caminho);
+    if (!arquivo.is_open()) return clientes; // arquivo pode não existir ainda
+
+    string linha;
+    getline(arquivo, linha); // descarta cabeçalho
+
+    while (getline(arquivo, linha)) {
+        if (linha.empty()) continue;
+        auto col = split(linha, ',');
+        if (col.size() < 2) continue;
+        clientes.push_back(Cliente(col[0], col[1], 0.0f));
+    }
+    return clientes;
+}
+
+void CSVManager::salvarClientes(const string& caminho, const vector<Cliente>& clientes) {
+    ofstream arquivo(caminho);
+    if (!arquivo.is_open()) {
+        cerr << "Erro: nao foi possivel abrir " << caminho << "\n";
+        return;
+    }
+    arquivo << "nome,cpf\n";
+    for (const auto& c : clientes)
+        arquivo << c.getNome() << "," << c.getCpf() << "\n";
+}

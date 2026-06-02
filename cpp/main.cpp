@@ -8,6 +8,7 @@
 #include "src/Trabalhador.h"
 #include "src/CSVManager.h"
 #include "src/Menu.h"
+#include "src/Cli.h"
 using namespace std;
 
 enum SelectedMenu {
@@ -30,7 +31,10 @@ void printMainMenu(const string& erro = "") {
     cout << "\n\n  R: ";
 }
 
-int main() {
+int main(int argc, char** argv) {
+    // Com argumentos: modo backend (CLI) chamado pela web. Sem: menu interativo.
+    if (argc > 1) return executarCli(argc, argv);
+
     vector<Trabalhador> trabalhadores = CSVManager::carregarTrabalhadores("data/trabalhadores.csv");
     CSVManager::carregarTrabalhos("data/trabalhos.csv", trabalhadores);
 
