@@ -44,11 +44,26 @@ body {
 .login-tela { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
 .login-card {
   width: 100%; max-width: 400px; background: var(--card);
-  border: 1px solid var(--linha); border-radius: 16px; padding: 28px;
+  border: 1px solid var(--linha); border-top: 4px solid var(--tema, var(--acento));
+  border-radius: 16px; padding: 28px; --tema: var(--acento);
+  transition: border-color .2s;
 }
-.login-topo { text-align: center; margin-bottom: 22px; }
-.login-topo h1 { margin: 0; font-size: 1.6rem; }
+/* tema por modo: azul para entrar, verde para registrar */
+.login-card.modo-login { --tema: var(--acento); }
+.login-card.modo-registro { --tema: var(--ok); }
+.login-card .primario { background: var(--tema); }
+.login-card .primario:hover { background: var(--tema); filter: brightness(1.1); }
+.login-card .papel-op.ativo { border-color: var(--tema); }
+.login-card .link-btn { color: var(--tema); }
+
+.login-topo { text-align: center; margin-bottom: 20px; }
+.marca {
+  display: block; text-transform: uppercase; letter-spacing: .14em;
+  font-size: 0.68rem; color: var(--suave); margin-bottom: 10px;
+}
+.login-topo h1 { margin: 0; font-size: 1.55rem; }
 .login-topo .sub { margin: 4px 0 0; color: var(--suave); font-size: 0.88rem; }
+.papel-titulo { margin: 0 0 8px; font-size: 0.82rem; color: var(--suave); }
 
 .link-btn {
   display: block; width: 100%; margin-top: 12px; background: none; border: none;
@@ -123,12 +138,21 @@ legend { color: var(--suave); font-size: 0.85rem; padding: 0 6px; }
 
 .datas { list-style: none; padding: 0; margin: 0; }
 .datas li {
-  display: grid; grid-template-columns: 90px 130px 1fr; gap: 10px;
-  padding: 7px 0; border-top: 1px solid var(--linha); font-size: 0.9rem;
+  display: grid; grid-template-columns: 90px 130px 1fr auto; gap: 10px;
+  align-items: center; padding: 7px 0; border-top: 1px solid var(--linha); font-size: 0.9rem;
 }
 .data-celula { font-variant-numeric: tabular-nums; }
 .hab-celula { color: var(--acento); }
 .cliente-celula { color: var(--suave); }
+.valor-celula { text-align: right; font-variant-numeric: tabular-nums; }
+
+.resumo-faixa {
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  background: var(--card-2); border: 1px solid var(--linha); border-radius: 10px;
+  padding: 11px 15px; margin-bottom: 14px; font-size: 0.9rem; color: var(--suave);
+}
+.resumo-faixa strong { color: var(--texto); }
+.capitalize { text-transform: capitalize; }
 
 .hab-linha { display: grid; grid-template-columns: 1fr 140px 38px; gap: 8px; margin-bottom: 8px; }
 .remover {

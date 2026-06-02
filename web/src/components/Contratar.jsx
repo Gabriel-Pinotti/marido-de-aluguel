@@ -5,7 +5,7 @@ import { brl, dataStr, habilidadesDisponiveis } from "../util.js";
 const dataValida = (d, m, a) =>
   d >= 1 && d <= 31 && m >= 1 && m <= 12 && a >= 2026;
 
-export default function Contratar({ trabalhadores, trabalhos, onContratado }) {
+export default function Contratar({ usuario, trabalhadores, trabalhos, onContratado }) {
   const habilidades = useMemo(
     () => habilidadesDisponiveis(trabalhadores),
     [trabalhadores]
@@ -16,8 +16,6 @@ export default function Contratar({ trabalhadores, trabalhos, onContratado }) {
   const [mes, setMes] = useState("");
   const [ano, setAno] = useState("");
   const [selecionado, setSelecionado] = useState(null);
-  const [nomeCliente, setNomeCliente] = useState("");
-  const [cpfCliente, setCpfCliente] = useState("");
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState(null);
 
@@ -51,18 +49,16 @@ export default function Contratar({ trabalhadores, trabalhos, onContratado }) {
         cpfTrabalhador: selecionado.cpf,
         habilidade,
         dia: d, mes: m, ano: a,
-        nomeCliente,
-        cpfCliente,
+        nomeCliente: usuario.nome,
+        cpfCliente: usuario.cpf,
       });
       setSucesso({
-        trabalhador: selecionado.nomeCompleto || selecionado.nome,
+        trabalhador: selecionado.nome,
         habilidade,
         data: dataStr(d, m, a),
         valor: r.trabalho.valor,
       });
       setSelecionado(null);
-      setNomeCliente("");
-      setCpfCliente("");
       onContratado();
     } catch (err) {
       setErro(err.message);
@@ -140,19 +136,16 @@ export default function Contratar({ trabalhadores, trabalhos, onContratado }) {
 
       {selecionado && (
         <form className="form-cliente" onSubmit={enviar}>
-          <h3>Seus dados</h3>
-          <label className="campo">
-            <span>Nome</span>
-            <input value={nomeCliente} onChange={(e) => setNomeCliente(e.target.value)} />
-          </label>
-          <label className="campo">
-            <span>CPF (11 dígitos)</span>
-            <input value={cpfCliente} onChange={(e) => setCpfCliente(e.target.value)} />
-          </label>
+          <h3>Confirmar contratação</h3>
+          <dl className="resumo">
+            <dt>Profissional</dt><dd>{selecionado.nome}</dd>
+            <dt>Serviço</dt><dd>{habilidade}</dd>
+            <dt>Data</dt><dd>{dataStr(d, m, a)}</dd>
+            <dt>Valor</dt><dd>{brl(selecionado.valor)}</dd>
+            <dt>Cliente</dt><dd>{usuario.nome}</dd>
+          </dl>
           {erro && <p className="dica erro">{erro}</p>}
-          <button className="primario" type="submit">
-            Confirmar contratação de {selecionado.nome}
-          </button>
+          <button className="primario" type="submit">Confirmar</button>
         </form>
       )}
     </section>

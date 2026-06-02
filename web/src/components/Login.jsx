@@ -94,12 +94,20 @@ export default function Login({ onLogin }) {
 
   return (
     <div className="login-tela">
-      <div className="login-card">
+      <div className={`login-card ${modo === "login" ? "modo-login" : "modo-registro"}`}>
         <header className="login-topo">
-          <h1>Marido de Aluguel</h1>
-          <p className="sub">entre ou registre-se para continuar</p>
+          <span className="marca">Marido de Aluguel</span>
+          <h1>{modo === "login" ? "Bem-vindo de volta" : "Criar conta"}</h1>
+          <p className="sub">
+            {modo === "login"
+              ? "entre para continuar"
+              : "preencha seus dados para se cadastrar"}
+          </p>
         </header>
 
+        <p className="papel-titulo">
+          {modo === "login" ? "Entrar como" : "Quero me cadastrar como"}
+        </p>
         <div className="papel">
           <label className={papel === "cliente" ? "papel-op ativo" : "papel-op"}>
             <input
@@ -124,7 +132,7 @@ export default function Login({ onLogin }) {
         {modo === "login" ? (
           <form onSubmit={entrar}>
             <label className="campo">
-              <span>Nome</span>
+              <span>Nome completo</span>
               <input value={nome} onChange={(e) => setNome(e.target.value)} autoFocus />
             </label>
             <label className="campo">
