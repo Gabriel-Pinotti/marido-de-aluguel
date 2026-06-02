@@ -48,6 +48,7 @@ function cadastrarTrabalhador(body) {
 
   const trabalhadores = lerTrabalhadores();
   if (trabalhadores.some((t) => t.cpf === cpf)) return { erro: "CPF já cadastrado." };
+  if (lerClientes().some((c) => c.cpf === cpf)) return { erro: "CPF já cadastrado." };
 
   if (habilidades.length === 0) return { erro: "Adicione pelo menos uma habilidade." };
   const habsLimpas = [];
@@ -115,6 +116,7 @@ function cadastrarCliente(body) {
 
   const clientes = lerClientes();
   if (clientes.some((c) => c.cpf === cpf)) return { erro: "CPF já cadastrado." };
+  if (lerTrabalhadores().some((t) => t.cpf === cpf)) return { erro: "CPF já cadastrado." };
 
   const novo = { nome, cpf };
   clientes.push(novo);

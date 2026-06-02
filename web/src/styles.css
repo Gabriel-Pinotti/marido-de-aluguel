@@ -66,6 +66,13 @@ body {
 .papel-op input { width: auto; }
 
 .primario.bloco { width: 100%; margin-top: 4px; }
+.primario:disabled { opacity: .5; cursor: not-allowed; }
+
+.campo-conflito { border-color: var(--erro) !important; }
+.indicador-conflito {
+  background: #3a1d1d; border: 1px solid #5a2a2a; border-radius: 8px;
+  padding: 8px 11px; margin-top: -6px;
+}
 
 .abas { display: flex; gap: 8px; margin: 24px 0; flex-wrap: wrap; }
 .aba {

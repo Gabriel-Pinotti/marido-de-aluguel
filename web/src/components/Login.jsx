@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getTrabalhadores,
   getClientes,
@@ -16,6 +16,27 @@ export default function Login({ onLogin }) {
   const [cpf, setCpf] = useState("");
   const [habilidades, setHabilidades] = useState([habVazia()]);
   const [erro, setErro] = useState("");
+  const [conflito, setConflito] = useState(false); // CPF já usado pelo papel oposto
+
+  // Indicador ao vivo: ao registrar, checa se o CPF já pertence ao OUTRO papel.
+  useEffect(() => {
+    if (modo !== "registro" || !/^[0-9]{11}$/.test(cpf)) {
+      setConflito(false);
+      return;
+    }
+    let ativo = true;
+    (async () => {
+      try {
+        const lista = papel === "cliente" ? await getTrabalhadores() : await getClientes();
+        if (ativo) setConflito(lista.some((u) => u.cpf === cpf));
+      } catch {
+        if (ativo) setConflito(false);
+      }
+    })();
+    return () => {
+      ativo = false;
+    };
+  }, [cpf, papel, modo]);
 
   const setHab = (i, campo, valor) =>
     setHabilidades((hs) => hs.map((h, j) => (j === i ? { ...h, [campo]: valor } : h)));
@@ -49,6 +70,10 @@ export default function Login({ onLogin }) {
   async function registrar(e) {
     e.preventDefault();
     setErro("");
+    if (conflito) {
+      setErro("Este CPF já está cadastrado.");
+      return;
+    }
     try {
       if (papel === "cliente") {
         const r = await cadastrarCliente({ nome, cpf });
@@ -114,8 +139,17 @@ export default function Login({ onLogin }) {
             </label>
             <label className="campo">
               <span>CPF (11 dígitos, apenas números)</span>
-              <input value={cpf} onChange={(e) => setCpf(e.target.value)} />
+              <input
+                value={cpf}
+                onChange={(e) => setCpf(e.target.value)}
+                className={conflito ? "campo-conflito" : ""}
+              />
             </label>
+            {conflito && (
+              <p className="dica erro indicador-conflito">
+                ⚠ Este CPF já está cadastrado.
+              </p>
+            )}
 
             {papel === "trabalhador" && (
               <fieldset className="habilidades">
@@ -153,7 +187,7 @@ export default function Login({ onLogin }) {
             )}
 
             {erro && <p className="dica erro">{erro}</p>}
-            <button className="primario bloco" type="submit">
+            <button className="primario bloco" type="submit" disabled={!!conflito}>
               Registrar e entrar
             </button>
             <button className="link-btn" type="button" onClick={() => trocarModo("login")}>
