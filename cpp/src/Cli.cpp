@@ -9,6 +9,8 @@
 #include <iomanip>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <cctype>
 using namespace std;
 
 // Caminhos relativos ao diretório de onde o binário é executado (a raiz do
@@ -40,6 +42,31 @@ static bool cpfValido(const string& cpf) {
 
 static bool dataValida(int dia, int mes, int ano) {
     return dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12 && ano >= 2026;
+}
+
+static string paraMinusculo(string s) {
+    for (auto& c : s) c = (char)tolower((unsigned char)c);
+    return s;
+}
+
+static bool contemCI(const string& texto, const string& termo) {
+    return paraMinusculo(texto).find(paraMinusculo(termo)) != string::npos;
+}
+
+// preenche `out` a partir de "Nome:val:Nome:val"; retorna "" se ok ou a mensagem de erro
+static string parseHabilidades(const string& s, vector<Habilidade>& out) {
+    auto tokens = split(s, ':');
+    for (size_t i = 0; i + 1 < tokens.size(); i += 2) {
+        string nh = trim(tokens[i]);
+        if (nh.empty()) return "Nome da habilidade não pode ser vazio.";
+        float val;
+        try { val = stof(tokens[i + 1]); }
+        catch (...) { return "Valor inválido. Digite um número positivo."; }
+        if (!(val > 0)) return "Valor inválido. Digite um número positivo.";
+        out.push_back(Habilidade(nh, val));
+    }
+    if (out.empty()) return "Adicione pelo menos uma habilidade.";
+    return "";
 }
 
 // ---------- helpers de JSON ----------
@@ -114,18 +141,40 @@ static string trabalhoJson(const string& cpfTrab, const Trabalho& w) {
     return os.str();
 }
 
-// ---------- comandos de LEITURA ----------
-
-static int listarTrabalhadores() {
-    auto trabalhadores = CSVManager::carregarTrabalhadores(CAMINHO_TRABALHADORES);
+// imprime um vetor JSON de trabalhadores
+static void imprimirTrabalhadores(const vector<const Trabalhador*>& lista) {
     ostringstream os;
     os << "[";
-    for (size_t i = 0; i < trabalhadores.size(); i++) {
-        os << trabalhadorJson(trabalhadores[i]);
-        if (i + 1 < trabalhadores.size()) os << ",";
+    for (size_t i = 0; i < lista.size(); i++) {
+        os << trabalhadorJson(*lista[i]);
+        if (i + 1 < lista.size()) os << ",";
     }
     os << "]";
     cout << os.str() << "\n";
+}
+
+// ---------- comandos de LEITURA / PESQUISA ----------
+
+static int listarTrabalhadores() {
+    auto trabalhadores = CSVManager::carregarTrabalhadores(CAMINHO_TRABALHADORES);
+    vector<const Trabalhador*> todos;
+    for (const auto& t : trabalhadores) todos.push_back(&t);
+    imprimirTrabalhadores(todos);
+    return 0;
+}
+
+// buscar-trabalhadores <termo>: casa por nome OU habilidade (case-insensitive)
+static int buscarTrabalhadores(const string& termo) {
+    auto trabalhadores = CSVManager::carregarTrabalhadores(CAMINHO_TRABALHADORES);
+    vector<const Trabalhador*> achados;
+    for (const auto& t : trabalhadores) {
+        bool casa = contemCI(t.getNome(), termo);
+        if (!casa)
+            for (const auto& h : t.getHabilidades())
+                if (contemCI(h.getNome(), termo)) { casa = true; break; }
+        if (casa) achados.push_back(&t);
+    }
+    imprimirTrabalhadores(achados);
     return 0;
 }
 
@@ -177,17 +226,8 @@ static int addTrabalhador(const string& nomeRaw, const string& cpfRaw, const str
         if (c.getCpf() == cpf) return erro("CPF já cadastrado."); // conflito de papel
 
     vector<Habilidade> habs;
-    auto tokens = split(habsStr, ':');
-    for (size_t i = 0; i + 1 < tokens.size(); i += 2) {
-        string nh = trim(tokens[i]);
-        if (nh.empty()) return erro("Nome da habilidade não pode ser vazio.");
-        float val;
-        try { val = stof(tokens[i + 1]); }
-        catch (...) { return erro("Valor inválido. Digite um número positivo."); }
-        if (!(val > 0)) return erro("Valor inválido. Digite um número positivo.");
-        habs.push_back(Habilidade(nh, val));
-    }
-    if (habs.empty()) return erro("Adicione pelo menos uma habilidade.");
+    string err = parseHabilidades(habsStr, habs);
+    if (!err.empty()) return erro(err);
 
     Trabalhador novo(nome, cpf, habs);
     trabalhadores.push_back(novo);
@@ -215,6 +255,60 @@ static int addCliente(const string& nomeRaw, const string& cpfRaw) {
     CSVManager::salvarClientes(CAMINHO_CLIENTES, clientes);
 
     cout << "{\"ok\":true,\"cliente\":" << clienteJson(novo) << "}\n";
+    return 0;
+}
+
+// editar-trabalhador <cpf> <habilidadesStr>: substitui as habilidades
+static int editarTrabalhador(const string& cpfRaw, const string& habsStr) {
+    string cpf = trim(cpfRaw);
+    if (!cpfValido(cpf)) return erro("CPF inválido. Digite exatamente 11 números.");
+
+    auto trabalhadores = CSVManager::carregarTrabalhadores(CAMINHO_TRABALHADORES);
+    Trabalhador* alvo = nullptr;
+    for (auto& t : trabalhadores)
+        if (t.getCpf() == cpf) { alvo = &t; break; }
+    if (!alvo) return erro("Trabalhador não encontrado.");
+
+    vector<Habilidade> habs;
+    string err = parseHabilidades(habsStr, habs);
+    if (!err.empty()) return erro(err);
+
+    alvo->definirHabilidades(habs);
+    CSVManager::salvarTrabalhadores(CAMINHO_TRABALHADORES, trabalhadores);
+
+    cout << "{\"ok\":true,\"trabalhador\":" << trabalhadorJson(*alvo) << "}\n";
+    return 0;
+}
+
+// remover-trabalhador <cpf>: remove o trabalhador E os trabalhos dele (cascade)
+static int removerTrabalhador(const string& cpfRaw) {
+    string cpf = trim(cpfRaw);
+    auto trabalhadores = CSVManager::carregarTrabalhadores(CAMINHO_TRABALHADORES);
+    CSVManager::carregarTrabalhos(CAMINHO_TRABALHOS, trabalhadores);
+
+    auto it = remove_if(trabalhadores.begin(), trabalhadores.end(),
+                        [&](const Trabalhador& t) { return t.getCpf() == cpf; });
+    if (it == trabalhadores.end()) return erro("Trabalhador não encontrado.");
+    trabalhadores.erase(it, trabalhadores.end());
+
+    CSVManager::salvarTrabalhadores(CAMINHO_TRABALHADORES, trabalhadores);
+    CSVManager::salvarTodosTrabalhos(CAMINHO_TRABALHOS, trabalhadores); // cascade
+    cout << "{\"ok\":true}\n";
+    return 0;
+}
+
+// remover-cliente <cpf>: remove só o cadastro do cliente (histórico de trabalhos fica)
+static int removerCliente(const string& cpfRaw) {
+    string cpf = trim(cpfRaw);
+    auto clientes = CSVManager::carregarClientes(CAMINHO_CLIENTES);
+
+    auto it = remove_if(clientes.begin(), clientes.end(),
+                        [&](const Cliente& c) { return c.getCpf() == cpf; });
+    if (it == clientes.end()) return erro("Cliente não encontrado.");
+    clientes.erase(it, clientes.end());
+
+    CSVManager::salvarClientes(CAMINHO_CLIENTES, clientes);
+    cout << "{\"ok\":true}\n";
     return 0;
 }
 
@@ -267,11 +361,23 @@ int executarCli(int argc, char** argv) {
         if (alvo == "clientes")      return listarClientes();
     }
 
+    if (cmd == "buscar-trabalhadores" && argc >= 3)
+        return buscarTrabalhadores(argv[2]);
+
     if (cmd == "add-trabalhador" && argc >= 5)
         return addTrabalhador(argv[2], argv[3], argv[4]);
 
     if (cmd == "add-cliente" && argc >= 4)
         return addCliente(argv[2], argv[3]);
+
+    if (cmd == "editar-trabalhador" && argc >= 4)
+        return editarTrabalhador(argv[2], argv[3]);
+
+    if (cmd == "remover-trabalhador" && argc >= 3)
+        return removerTrabalhador(argv[2]);
+
+    if (cmd == "remover-cliente" && argc >= 3)
+        return removerCliente(argv[2]);
 
     if (cmd == "contratar" && argc >= 9) {
         int dia, mes, ano;

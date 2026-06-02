@@ -24,6 +24,10 @@ const vector<Habilidade>& Trabalhador::getHabilidades() const {
     return habilidades;
 }
 
+void Trabalhador::definirHabilidades(vector<Habilidade> novas) {
+    habilidades = novas;
+}
+
 const vector<Trabalho>& Trabalhador::getTrabalhos() const {
     return trabalhos;
 }

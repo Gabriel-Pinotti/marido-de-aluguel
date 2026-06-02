@@ -26,6 +26,7 @@ public:
 
     const std::vector<Habilidade>& getHabilidades() const;
     const std::vector<Trabalho>& getTrabalhos() const;
+    void definirHabilidades(std::vector<Habilidade> novas); // usado na edição
 
     static int getTotalCadastrados(); // MÉTODO STATIC
 

@@ -133,6 +133,27 @@ void CSVManager::salvarTrabalho(const string& caminho, const string& cpfTrabalha
             << h.getValor() << "\n";
 }
 
+// Regrava o arquivo de trabalhos inteiro a partir dos objetos (usado para
+// remover/cancelar: carrega tudo, tira o que saiu, e reescreve).
+void CSVManager::salvarTodosTrabalhos(const string& caminho, const vector<Trabalhador>& trabalhadores) {
+    ofstream arquivo(caminho);
+    if (!arquivo.is_open()) {
+        cerr << "Erro: nao foi possivel abrir " << caminho << "\n";
+        return;
+    }
+    arquivo << "dia,mes,ano,cpf_trabalhador,nome_cliente,cpf_cliente,habilidade,valorOperacao\n";
+    for (const auto& t : trabalhadores) {
+        for (const auto& w : t.getTrabalhos()) {
+            Data d = w.getDataInicio();
+            Cliente c = w.getCliente();
+            Habilidade h = w.getHabilidade();
+            arquivo << d.getDia() << "," << d.getMes() << "," << d.getAno() << ","
+                    << t.getCpf() << "," << c.getNome() << "," << c.getCpf() << ","
+                    << h.getNome() << "," << h.getValor() << "\n";
+        }
+    }
+}
+
 vector<Cliente> CSVManager::carregarClientes(const string& caminho) {
     vector<Cliente> clientes;
     ifstream arquivo(caminho);
