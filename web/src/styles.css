@@ -50,12 +50,11 @@ body {
 .login-topo h1 { margin: 0; font-size: 1.6rem; }
 .login-topo .sub { margin: 4px 0 0; color: var(--suave); font-size: 0.88rem; }
 
-.seg { display: flex; gap: 6px; background: var(--card-2); padding: 4px; border-radius: 11px; margin-bottom: 16px; }
-.seg-btn {
-  flex: 1; background: transparent; border: none; color: var(--suave);
-  padding: 9px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+.link-btn {
+  display: block; width: 100%; margin-top: 12px; background: none; border: none;
+  color: var(--acento); cursor: pointer; font-size: 0.88rem; text-align: center;
 }
-.seg-btn.ativo { background: var(--acento); color: #fff; }
+.link-btn:hover { text-decoration: underline; }
 
 .papel { display: flex; gap: 8px; margin-bottom: 18px; }
 .papel-op {

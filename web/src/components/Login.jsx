@@ -73,21 +73,6 @@ export default function Login({ onLogin }) {
           <p className="sub">entre ou registre-se para continuar</p>
         </header>
 
-        <div className="seg">
-          <button
-            className={modo === "login" ? "seg-btn ativo" : "seg-btn"}
-            onClick={() => trocarModo("login")}
-          >
-            Entrar
-          </button>
-          <button
-            className={modo === "registro" ? "seg-btn ativo" : "seg-btn"}
-            onClick={() => trocarModo("registro")}
-          >
-            Registrar
-          </button>
-        </div>
-
         <div className="papel">
           <label className={papel === "cliente" ? "papel-op ativo" : "papel-op"}>
             <input
@@ -117,6 +102,9 @@ export default function Login({ onLogin }) {
             </label>
             {erro && <p className="dica erro">{erro}</p>}
             <button className="primario bloco" type="submit">Entrar</button>
+            <button className="link-btn" type="button" onClick={() => trocarModo("registro")}>
+              Criar uma conta
+            </button>
           </form>
         ) : (
           <form onSubmit={registrar}>
@@ -167,6 +155,9 @@ export default function Login({ onLogin }) {
             {erro && <p className="dica erro">{erro}</p>}
             <button className="primario bloco" type="submit">
               Registrar e entrar
+            </button>
+            <button className="link-btn" type="button" onClick={() => trocarModo("login")}>
+              já tenho uma conta
             </button>
           </form>
         )}
