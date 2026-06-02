@@ -1,0 +1,111 @@
+:root {
+  --bg: #0f1115;
+  --card: #181b22;
+  --card-2: #1f242d;
+  --linha: #2a313c;
+  --texto: #e6e9ef;
+  --suave: #99a2b2;
+  --acento: #4f9cff;
+  --acento-2: #3a7fe0;
+  --erro: #ff6b6b;
+  --ok: #46c08a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--texto);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+.app { max-width: 760px; margin: 0 auto; padding: 32px 20px 64px; }
+
+.topo h1 { margin: 0; font-size: 1.8rem; }
+.topo .sub { margin: 4px 0 0; color: var(--suave); font-size: 0.9rem; }
+.topo code { background: var(--card-2); padding: 1px 6px; border-radius: 5px; }
+
+.abas { display: flex; gap: 8px; margin: 24px 0; flex-wrap: wrap; }
+.aba {
+  background: var(--card); color: var(--suave); border: 1px solid var(--linha);
+  padding: 9px 16px; border-radius: 9px; cursor: pointer; font-size: 0.92rem;
+  transition: all .15s;
+}
+.aba:hover { color: var(--texto); }
+.aba.ativa { background: var(--acento); color: #fff; border-color: var(--acento); }
+
+.card {
+  background: var(--card); border: 1px solid var(--linha);
+  border-radius: 14px; padding: 24px;
+}
+.card h2 { margin: 0 0 18px; font-size: 1.3rem; }
+.card h3 { margin: 22px 0 10px; font-size: 1rem; color: var(--suave); }
+.vazio { color: var(--suave); }
+
+.campo { display: block; margin-bottom: 14px; }
+.campo > span { display: block; font-size: 0.85rem; color: var(--suave); margin-bottom: 5px; }
+
+input, select {
+  width: 100%; background: var(--card-2); border: 1px solid var(--linha);
+  color: var(--texto); padding: 10px 12px; border-radius: 9px; font-size: 0.95rem;
+}
+input:focus, select:focus { outline: none; border-color: var(--acento); }
+
+fieldset { border: 1px solid var(--linha); border-radius: 11px; padding: 14px 16px; margin: 0 0 16px; }
+legend { color: var(--suave); font-size: 0.85rem; padding: 0 6px; }
+
+.data { display: flex; gap: 10px; }
+.data input { width: 100%; }
+
+.lista { display: flex; flex-direction: column; gap: 8px; }
+.item {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  width: 100%; text-align: left; background: var(--card-2); border: 1px solid var(--linha);
+  color: var(--texto); padding: 12px 16px; border-radius: 10px; cursor: pointer; font-size: 0.95rem;
+}
+.item:hover { border-color: var(--acento); }
+.item.selecionado { border-color: var(--acento); background: #1d2735; }
+.item .habs { color: var(--suave); font-size: 0.85rem; text-align: right; }
+
+.agenda { padding: 6px 4px 12px 16px; }
+.agenda h4 { margin: 14px 0 8px; font-size: 0.9rem; color: var(--suave); }
+.habilidades-detalhe { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.tag { background: var(--card-2); border: 1px solid var(--linha); padding: 3px 10px; border-radius: 20px; font-size: 0.82rem; }
+
+.datas { list-style: none; padding: 0; margin: 0; }
+.datas li {
+  display: grid; grid-template-columns: 90px 130px 1fr; gap: 10px;
+  padding: 7px 0; border-top: 1px solid var(--linha); font-size: 0.9rem;
+}
+.data-celula { font-variant-numeric: tabular-nums; }
+.hab-celula { color: var(--acento); }
+.cliente-celula { color: var(--suave); }
+
+.hab-linha { display: grid; grid-template-columns: 1fr 140px 38px; gap: 8px; margin-bottom: 8px; }
+.remover {
+  background: var(--card); border: 1px solid var(--linha); color: var(--suave);
+  border-radius: 9px; cursor: pointer; font-size: 1.1rem;
+}
+.remover:disabled { opacity: .4; cursor: not-allowed; }
+
+button.primario {
+  background: var(--acento); color: #fff; border: none; padding: 11px 18px;
+  border-radius: 10px; cursor: pointer; font-size: 0.95rem; margin-top: 8px;
+}
+button.primario:hover { background: var(--acento-2); }
+button.secundario {
+  background: transparent; color: var(--acento); border: 1px dashed var(--linha);
+  padding: 8px 14px; border-radius: 9px; cursor: pointer; font-size: 0.88rem;
+}
+
+.resumo { display: grid; grid-template-columns: 120px 1fr; gap: 6px 12px; margin: 0 0 18px; }
+.resumo dt { color: var(--suave); }
+.resumo dd { margin: 0; }
+
+.dica { font-size: 0.85rem; margin: 8px 0 0; }
+.erro { color: var(--erro); }
+.alerta { padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; }
+.alerta.erro { background: #3a1d1d; border: 1px solid #5a2a2a; }
+.form-cliente { margin-top: 14px; border-top: 1px solid var(--linha); padding-top: 8px; }

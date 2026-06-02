@@ -2,4 +2,7 @@
 *.docx#
 *.log
 *.out
-todo.md
+node_modules
+dist
+*.ignore.*
+.*/
