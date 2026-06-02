@@ -53,12 +53,14 @@ export default function Login({ onLogin }) {
     e.preventDefault();
     setErro("");
     const alvo = norm(nome);
+    const cpfAlvo = cpf.trim();
     if (!alvo) return setErro("Digite seu nome.");
+    if (!cpfAlvo) return setErro("Digite seu CPF.");
     try {
       const lista = papel === "trabalhador" ? await getTrabalhadores() : await getClientes();
-      const achado = lista.find((u) => norm(u.nome) === alvo);
+      const achado = lista.find((u) => norm(u.nome) === alvo && u.cpf === cpfAlvo);
       if (!achado) {
-        setErro("Nome não encontrado. Faça seu registro primeiro.");
+        setErro("Nome ou CPF incorreto, verifique os dados e tente novamente.");
         return;
       }
       onLogin({ papel, nome: achado.nome, cpf: achado.cpf });
@@ -124,6 +126,10 @@ export default function Login({ onLogin }) {
             <label className="campo">
               <span>Nome</span>
               <input value={nome} onChange={(e) => setNome(e.target.value)} autoFocus />
+            </label>
+            <label className="campo">
+              <span>CPF (11 dígitos, apenas números)</span>
+              <input value={cpf} onChange={(e) => setCpf(e.target.value)} />
             </label>
             {erro && <p className="dica erro">{erro}</p>}
             <button className="primario bloco" type="submit">Entrar</button>
@@ -191,7 +197,7 @@ export default function Login({ onLogin }) {
               Registrar e entrar
             </button>
             <button className="link-btn" type="button" onClick={() => trocarModo("login")}>
-              já tenho uma conta
+              Já tenho uma conta
             </button>
           </form>
         )}
