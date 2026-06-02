@@ -44,6 +44,19 @@ static bool dataValida(int dia, int mes, int ano) {
     return dia >= 1 && dia <= 31 && mes >= 1 && mes <= 12 && ano >= 2026;
 }
 
+// nº de dias desde 1970-01-01 (algoritmo "days from civil") para diferença entre datas
+static long diasCivis(int y, int m, int d) {
+    y -= m <= 2;
+    long era = (y >= 0 ? y : y - 399) / 400;
+    unsigned yoe = (unsigned)(y - era * 400);
+    unsigned doy = (153 * (m + (m > 2 ? -3 : 9)) + 2) / 5 + d - 1;
+    unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    return era * 146097 + (long)doe - 719468;
+}
+
+// "mais de 7 dias de antecedência": do exemplo, hoje dia 2 -> só a partir do dia 10
+static const long DIAS_MIN_ANTECEDENCIA = 8;
+
 static string paraMinusculo(string s) {
     for (auto& c : s) c = (char)tolower((unsigned char)c);
     return s;
@@ -312,6 +325,31 @@ static int removerCliente(const string& cpfRaw) {
     return 0;
 }
 
+// cancelar-trabalho <cpfTrab> <dia> <mes> <ano> <hojeDia> <hojeMes> <hojeAno>
+// Permitido só com mais de 7 dias de antecedência (o "hoje" vem do Node).
+static int cancelarTrabalho(const string& cpfTrab, int dia, int mes, int ano,
+                            int hd, int hm, int hy) {
+    auto trabalhadores = CSVManager::carregarTrabalhadores(CAMINHO_TRABALHADORES);
+    CSVManager::carregarTrabalhos(CAMINHO_TRABALHOS, trabalhadores);
+
+    Trabalhador* alvo = nullptr;
+    for (auto& t : trabalhadores)
+        if (t.getCpf() == cpfTrab) { alvo = &t; break; }
+    if (!alvo) return erro("Trabalhador não encontrado.");
+
+    Data dataAg(dia, mes, ano);
+    if (alvo->estaLivre(dataAg)) return erro("Agendamento não encontrado.");
+
+    long diff = diasCivis(ano, mes, dia) - diasCivis(hy, hm, hd);
+    if (diff < DIAS_MIN_ANTECEDENCIA)
+        return erro("Só é possível cancelar com mais de 7 dias de antecedência.");
+
+    alvo->cancelarTrabalho(dataAg);
+    CSVManager::salvarTodosTrabalhos(CAMINHO_TRABALHOS, trabalhadores);
+    cout << "{\"ok\":true}\n";
+    return 0;
+}
+
 // contratar <cpfTrab> <habilidade> <dia> <mes> <ano> <nomeCliente> <cpfCliente>
 static int contratar(const string& cpfTrab, const string& habNome,
                      int dia, int mes, int ano,
@@ -378,6 +416,15 @@ int executarCli(int argc, char** argv) {
 
     if (cmd == "remover-cliente" && argc >= 3)
         return removerCliente(argv[2]);
+
+    if (cmd == "cancelar-trabalho" && argc >= 9) {
+        int dia, mes, ano, hd, hm, hy;
+        try {
+            dia = stoi(argv[3]); mes = stoi(argv[4]); ano = stoi(argv[5]);
+            hd = stoi(argv[6]); hm = stoi(argv[7]); hy = stoi(argv[8]);
+        } catch (...) { return erro("Data inválida."); }
+        return cancelarTrabalho(argv[2], dia, mes, ano, hd, hm, hy);
+    }
 
     if (cmd == "contratar" && argc >= 9) {
         int dia, mes, ano;

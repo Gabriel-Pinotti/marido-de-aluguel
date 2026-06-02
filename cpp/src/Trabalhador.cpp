@@ -1,6 +1,7 @@
 #include "Trabalhador.h"
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 using namespace std;
 
 int Trabalhador::totalCadastrados = 0; // definição do atributo static
@@ -18,6 +19,15 @@ Trabalho Trabalhador::contratar(Cliente& c, Data d, Habilidade h) {
 
 void Trabalhador::adicionarTrabalho(const Trabalho& t) {
     trabalhos.push_back(t);
+}
+
+bool Trabalhador::cancelarTrabalho(const Data& d) {
+    size_t antes = trabalhos.size();
+    trabalhos.erase(
+        remove_if(trabalhos.begin(), trabalhos.end(),
+                  [&](const Trabalho& t) { return t.getDataInicio() == d; }),
+        trabalhos.end());
+    return trabalhos.size() != antes;
 }
 
 const vector<Habilidade>& Trabalhador::getHabilidades() const {

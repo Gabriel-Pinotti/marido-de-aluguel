@@ -18,6 +18,7 @@ public:
 
     Trabalho contratar(Cliente& c, Data d, Habilidade h);
     void adicionarTrabalho(const Trabalho& t); // usado pelo CSVManager ao carregar
+    bool cancelarTrabalho(const Data& d);      // remove o agendamento naquela data
     bool estaLivre(Data d) const;
 
     // SOBRECARGA: mesmo nome, assinaturas diferentes
