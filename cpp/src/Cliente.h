@@ -8,4 +8,6 @@ private:
 public:
     Cliente(std::string nomeCompleto, std::string cpf, float dinheiro);
     float quantosReais() const;
+
+    std::string papel() const override; // SOBRESCRITA do método abstrato de Pessoa
 };

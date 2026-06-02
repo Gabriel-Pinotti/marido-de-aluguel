@@ -90,7 +90,7 @@ void CSVManager::carregarTrabalhos(const string& caminho, vector<Trabalhador>& t
         Trabalho trabalho(data, cliente, hab);
 
         for (auto& t : trabalhadores) {
-            if (t.cpf == cpfTrabalhador) {
+            if (t.getCpf() == cpfTrabalhador) {
                 t.adicionarTrabalho(trabalho);
                 break;
             }
@@ -108,12 +108,8 @@ void CSVManager::salvarTrabalhadores(const string& caminho, const vector<Trabalh
 
     arquivo << "nome,cpf,habilidades\n";
     for (const auto& t : trabalhadores) {
-        arquivo << t.nomeCompleto << "," << t.cpf << ",";
-        for (size_t i = 0; i < t.habilidades.size(); i++) {
-            arquivo << t.habilidades[i].nome << ":" << fixed << setprecision(2) << t.habilidades[i].valorOperacao;
-            if (i + 1 < t.habilidades.size()) arquivo << ":";
-        }
-        arquivo << "\n";
+        // polimorfismo via interface: cada Trabalhador sabe se serializar
+        arquivo << t.paraCSV() << "\n";
     }
 }
 
@@ -129,10 +125,10 @@ void CSVManager::salvarTrabalho(const string& caminho, const string& cpfTrabalha
     Cliente c = trabalho.getCliente();
     Habilidade h = trabalho.getHabilidade();
 
-    arquivo << d.dia << "," << d.mes << "," << d.ano << ","
+    arquivo << d.getDia() << "," << d.getMes() << "," << d.getAno() << ","
             << cpfTrabalhador << ","
-            << c.nomeCompleto << ","
-            << c.cpf << ","
-            << h.nome << ","
-            << h.valorOperacao << "\n";
+            << c.getNome() << ","
+            << c.getCpf() << ","
+            << h.getNome() << ","
+            << h.getValor() << "\n";
 }

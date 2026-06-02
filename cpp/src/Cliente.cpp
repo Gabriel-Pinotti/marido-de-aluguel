@@ -7,3 +7,5 @@ Cliente::Cliente(string nomeCompleto, string cpf, float dinheiro)
 float Cliente::quantosReais() const {
     return dinheiro;
 }
+
+string Cliente::papel() const { return "Cliente"; }

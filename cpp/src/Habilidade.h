@@ -2,9 +2,12 @@
 #include <string>
 
 class Habilidade {
-public:
+private:
     std::string nome;
     float valorOperacao;
 
+public:
     Habilidade(std::string nome, float valorOperacao);
+    std::string getNome() const;
+    float getValor() const;
 };

@@ -33,13 +33,15 @@ static bool dataValida(int dia, int mes, int ano) {
 
 static void printAgendaTrabalhador(const Trabalhador& t) {
     limparTela();
-    cout << "----- " << t.nomeCompleto << " ";
-    cout << string(max(0, 30 - (int)t.nomeCompleto.size()), '-') << "\n";
+    const Pessoa& p = t; // uso polimórfico: papel() é resolvido em tempo de execução
+    cout << "----- [" << p.papel() << "] " << t.getNome() << " ";
+    cout << string(max(0, 30 - (int)t.getNome().size()), '-') << "\n";
 
     cout << "Habilidades: ";
-    for (size_t i = 0; i < t.habilidades.size(); i++) {
-        cout << t.habilidades[i].nome << " (R$ " << fixed << setprecision(2) << t.habilidades[i].valorOperacao << ")";
-        if (i + 1 < t.habilidades.size()) cout << " | ";
+    const auto& habs = t.getHabilidades();
+    for (size_t i = 0; i < habs.size(); i++) {
+        cout << habs[i].getNome() << " (R$ " << fixed << setprecision(2) << habs[i].getValor() << ")";
+        if (i + 1 < habs.size()) cout << " | ";
     }
     cout << "\n\nDatas ocupadas:\n";
 
@@ -50,8 +52,8 @@ static void printAgendaTrabalhador(const Trabalhador& t) {
         for (const auto& trab : trabalhos) {
             Data d = trab.getDataInicio();
             cout << "  " << d.toString()
-                 << "  " << left << setw(12) << trab.getHabilidade().nome
-                 << "  cliente: " << trab.getCliente().nomeCompleto << "\n";
+                 << "  " << left << setw(12) << trab.getHabilidade().getNome()
+                 << "  cliente: " << trab.getCliente().getNome() << "\n";
         }
     }
 
@@ -91,7 +93,7 @@ void menuCadastrarTrabalhador(vector<Trabalhador>& trabalhadores) {
         }
         bool cpfDuplicado = false;
         for (const auto& t : trabalhadores)
-            if (t.cpf == cpf) { cpfDuplicado = true; break; }
+            if (t.getCpf() == cpf) { cpfDuplicado = true; break; }
         if (cpfDuplicado) {
             erro = "CPF já cadastrado.";
             continue;
@@ -107,7 +109,7 @@ void menuCadastrarTrabalhador(vector<Trabalhador>& trabalhadores) {
             if (!habilidades.empty()) {
                 cout << "\nHabilidades adicionadas:\n";
                 for (const auto& h : habilidades)
-                    cout << "  - " << h.nome << " (R$ " << fixed << setprecision(2) << h.valorOperacao << ")\n";
+                    cout << "  - " << h.getNome() << " (R$ " << fixed << setprecision(2) << h.getValor() << ")\n";
             }
 
             if (!erro.empty()) cout << "\n  ! " << erro << "\n";
@@ -154,7 +156,7 @@ void menuCadastrarTrabalhador(vector<Trabalhador>& trabalhadores) {
         cout << "  CPF:  " << cpf << "\n";
         cout << "  Habilidades: ";
         for (size_t i = 0; i < habilidades.size(); i++) {
-            cout << habilidades[i].nome << " (R$ " << fixed << setprecision(2) << habilidades[i].valorOperacao << ")";
+            cout << habilidades[i].getNome() << " (R$ " << fixed << setprecision(2) << habilidades[i].getValor() << ")";
             if (i + 1 < habilidades.size()) cout << ", ";
         }
         cout << "\n\nPressione Enter para voltar ao menu inicial...";
@@ -180,11 +182,11 @@ void menuContratacao(vector<Trabalhador>& trabalhadores) {
     do {
         vector<string> habilidades;
         for (const auto& t : trabalhadores)
-            for (const auto& h : t.habilidades) {
+            for (const auto& h : t.getHabilidades()) {
                 bool existe = false;
                 for (const auto& nome : habilidades)
-                    if (nome == h.nome) { existe = true; break; }
-                if (!existe) habilidades.push_back(h.nome);
+                    if (nome == h.getNome()) { existe = true; break; }
+                if (!existe) habilidades.push_back(h.getNome());
             }
 
         if (habilidades.empty()) {
@@ -238,8 +240,8 @@ void menuContratacao(vector<Trabalhador>& trabalhadores) {
         vector<Trabalhador*> disponiveis;
         vector<Habilidade> habDisponiveis;
         for (auto& t : trabalhadores)
-            for (const auto& h : t.habilidades)
-                if (h.nome == habSelecionada && t.estaLivre(dataSelecionada)) {
+            for (const auto& h : t.getHabilidades())
+                if (h.getNome() == habSelecionada && t.estaLivre(dataSelecionada)) {
                     disponiveis.push_back(&t);
                     habDisponiveis.push_back(h);
                     break;
@@ -260,8 +262,8 @@ void menuContratacao(vector<Trabalhador>& trabalhadores) {
         cout << "===== Contratar Serviços =====\n\n";
         cout << "Trabalhadores disponíveis em " << dataSelecionada.toString() << ":\n";
         for (size_t i = 0; i < disponiveis.size(); i++)
-            cout << "  " << i + 1 << ". " << left << setw(20) << disponiveis[i]->nomeCompleto
-                 << "R$ " << fixed << setprecision(2) << habDisponiveis[i].valorOperacao << "\n";
+            cout << "  " << i + 1 << ". " << left << setw(20) << disponiveis[i]->getNome()
+                 << "R$ " << fixed << setprecision(2) << habDisponiveis[i].getValor() << "\n";
         cout << "\n  0. Voltar";
         if (!erro.empty()) cout << "\n\n  ! " << erro;
         cout << "\n\n  R: ";
@@ -307,15 +309,15 @@ void menuContratacao(vector<Trabalhador>& trabalhadores) {
         Cliente cliente(nomeCliente, cpfCliente, 0.0f);
 
         Trabalho t = trabSelecionado->contratar(cliente, dataSelecionada, habEscolhida);
-        CSVManager::salvarTrabalho("data/trabalhos.csv", trabSelecionado->cpf, t);
+        CSVManager::salvarTrabalho("data/trabalhos.csv", trabSelecionado->getCpf(), t);
 
         limparTela();
         cout << "===== Contratar Serviços =====\n\n";
         cout << "Contratação realizada!\n"
-             << "  Trabalhador: " << trabSelecionado->nomeCompleto << "\n"
-             << "  Serviço:     " << habEscolhida.nome << "\n"
+             << "  Trabalhador: " << trabSelecionado->getNome() << "\n"
+             << "  Serviço:     " << habEscolhida.getNome() << "\n"
              << "  Data:        " << dataSelecionada.toString() << "\n"
-             << "  Valor:       R$ " << fixed << setprecision(2) << habEscolhida.valorOperacao << "\n";
+             << "  Valor:       R$ " << fixed << setprecision(2) << habEscolhida.getValor() << "\n";
 
         cout << "\nPressione Enter para voltar ao menu inicial...";
         cin.get();
@@ -343,10 +345,11 @@ void menuDisponibilidade(vector<Trabalhador>& trabalhadores) {
         cout << "===== Checar Disponibilidade =====\n\n";
 
         for (size_t i = 0; i < trabalhadores.size(); i++) {
-            cout << "  " << i + 1 << ". " << left << setw(20) << trabalhadores[i].nomeCompleto << "| ";
-            for (size_t j = 0; j < trabalhadores[i].habilidades.size(); j++) {
-                cout << trabalhadores[i].habilidades[j].nome;
-                if (j + 1 < trabalhadores[i].habilidades.size()) cout << ", ";
+            cout << "  " << i + 1 << ". " << left << setw(20) << trabalhadores[i].getNome() << "| ";
+            const auto& habs = trabalhadores[i].getHabilidades();
+            for (size_t j = 0; j < habs.size(); j++) {
+                cout << habs[j].getNome();
+                if (j + 1 < habs.size()) cout << ", ";
             }
             cout << "\n";
         }

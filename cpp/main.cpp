@@ -24,6 +24,8 @@ void printMainMenu(const string& erro = "") {
     cout << "\n2- Checar disponibilidade";
     cout << "\n3- Cadastrar trabalhador";
     cout << "\n0- Sair";
+    // usa o método/atributo static de Trabalhador
+    cout << "\n\n(" << Trabalhador::getTotalCadastrados() << " trabalhador(es) no sistema)";
     if (!erro.empty()) cout << "\n\n  ! " << erro;
     cout << "\n\n  R: ";
 }
