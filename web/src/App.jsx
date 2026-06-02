@@ -3,6 +3,9 @@ import { getTrabalhadores, getTrabalhos } from "./api.js";
 import Contratar from "./components/Contratar.jsx";
 import Disponibilidade from "./components/Disponibilidade.jsx";
 import Cadastrar from "./components/Cadastrar.jsx";
+import Login from "./components/Login.jsx";
+
+const CHAVE_USUARIO = "marido-usuario";
 
 const ABAS = [
   { id: "contratar", titulo: "Contratar serviços" },
@@ -11,10 +14,24 @@ const ABAS = [
 ];
 
 export default function App() {
+  const [usuario, setUsuario] = useState(() => {
+    const salvo = localStorage.getItem(CHAVE_USUARIO);
+    return salvo ? JSON.parse(salvo) : null;
+  });
   const [aba, setAba] = useState("contratar");
   const [trabalhadores, setTrabalhadores] = useState([]);
   const [trabalhos, setTrabalhos] = useState([]);
   const [erroCarga, setErroCarga] = useState("");
+
+  function entrar(u) {
+    localStorage.setItem(CHAVE_USUARIO, JSON.stringify(u));
+    setUsuario(u);
+  }
+
+  function sair() {
+    localStorage.removeItem(CHAVE_USUARIO);
+    setUsuario(null);
+  }
 
   const recarregar = useCallback(async () => {
     try {
@@ -28,14 +45,23 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    recarregar();
-  }, [recarregar]);
+    if (usuario) recarregar();
+  }, [recarregar, usuario]);
+
+  if (!usuario) return <Login onLogin={entrar} />;
 
   return (
     <div className="app">
       <header className="topo">
-        <h1>Marido de Aluguel</h1>
-        <p className="sub">interface web · lê e grava direto em <code>data/</code></p>
+        <div>
+          <h1>Marido de Aluguel</h1>
+          <p className="sub">interface web · lê e grava direto em <code>data/</code></p>
+        </div>
+        <div className="usuario">
+          <span className="usuario-nome">{usuario.nome}</span>
+          <span className="usuario-papel">{usuario.papel}</span>
+          <button className="logout" onClick={sair}>sair</button>
+        </div>
       </header>
 
       <nav className="abas">

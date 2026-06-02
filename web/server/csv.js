@@ -10,10 +10,12 @@ export const DATA_DIR = path.resolve(serverDir, "..", "..", "data");
 
 const TRABALHADORES = path.join(DATA_DIR, "trabalhadores.csv");
 const TRABALHOS = path.join(DATA_DIR, "trabalhos.csv");
+const CLIENTES = path.join(DATA_DIR, "clientes.csv");
 
 const HEADER_TRABALHADORES = "nome,cpf,habilidades";
 const HEADER_TRABALHOS =
   "dia,mes,ano,cpf_trabalhador,nome_cliente,cpf_cliente,habilidade,valorOperacao";
+const HEADER_CLIENTES = "nome,cpf";
 
 // Quebra em linhas não-vazias, descartando o cabeçalho.
 function linhasDeDados(caminho) {
@@ -96,4 +98,24 @@ export function adicionarTrabalho(t) {
     `${t.dia},${t.mes},${t.ano},${t.cpfTrabalhador},` +
     `${t.nomeCliente},${t.cpfCliente},${t.habilidade},${fmtValorTrabalho(t.valor)}\n`;
   fs.appendFileSync(TRABALHOS, prefixo + linha, "utf8");
+}
+
+// ---------- clientes ----------
+// Registro próprio da web (o C++ não usa este arquivo): permite login/registro
+// de cliente, já que hoje o cliente só existe embutido em trabalhos.csv.
+
+export function lerClientes() {
+  return linhasDeDados(CLIENTES)
+    .map((linha) => {
+      const col = linha.split(",");
+      if (col.length < 2) return null;
+      return { nome: col[0], cpf: col[1] };
+    })
+    .filter(Boolean);
+}
+
+export function salvarClientes(clientes) {
+  let saida = HEADER_CLIENTES + "\n";
+  for (const c of clientes) saida += `${c.nome},${c.cpf}\n`;
+  fs.writeFileSync(CLIENTES, saida, "utf8");
 }

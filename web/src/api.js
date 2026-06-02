@@ -13,5 +13,7 @@ const post = (url, body) =>
 
 export const getTrabalhadores = () => fetch("/api/trabalhadores").then(json);
 export const getTrabalhos = () => fetch("/api/trabalhos").then(json);
+export const getClientes = () => fetch("/api/clientes").then(json);
 export const cadastrarTrabalhador = (body) => post("/api/trabalhadores", body);
+export const cadastrarCliente = (body) => post("/api/clientes", body);
 export const contratar = (body) => post("/api/trabalhos", body);

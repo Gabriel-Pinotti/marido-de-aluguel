@@ -5,6 +5,8 @@ import {
   salvarTrabalhadores,
   lerTrabalhos,
   adicionarTrabalho,
+  lerClientes,
+  salvarClientes,
 } from "./csv.js";
 
 // --- validações espelhando as regras do C++ ---
@@ -103,6 +105,23 @@ function contratar(body) {
   return { ok: true, trabalho };
 }
 
+// POST /api/clientes  → registrar cliente
+function cadastrarCliente(body) {
+  const nome = (body.nome || "").trim();
+  const cpf = (body.cpf || "").trim();
+
+  if (!nome) return { erro: "Nome não pode ser vazio." };
+  if (!cpfValido(cpf)) return { erro: "CPF inválido. Digite exatamente 11 números." };
+
+  const clientes = lerClientes();
+  if (clientes.some((c) => c.cpf === cpf)) return { erro: "CPF já cadastrado." };
+
+  const novo = { nome, cpf };
+  clientes.push(novo);
+  salvarClientes(clientes);
+  return { ok: true, cliente: novo };
+}
+
 export function maridoApiPlugin() {
   return {
     name: "marido-api",
@@ -116,6 +135,8 @@ export function maridoApiPlugin() {
             return responder(res, 200, lerTrabalhadores());
           if (req.method === "GET" && url === "/api/trabalhos")
             return responder(res, 200, lerTrabalhos());
+          if (req.method === "GET" && url === "/api/clientes")
+            return responder(res, 200, lerClientes());
 
           if (req.method === "POST" && url === "/api/trabalhadores") {
             const r = cadastrarTrabalhador(await lerCorpo(req));
@@ -123,6 +144,10 @@ export function maridoApiPlugin() {
           }
           if (req.method === "POST" && url === "/api/trabalhos") {
             const r = contratar(await lerCorpo(req));
+            return responder(res, r.erro ? 400 : 201, r);
+          }
+          if (req.method === "POST" && url === "/api/clientes") {
+            const r = cadastrarCliente(await lerCorpo(req));
             return responder(res, r.erro ? 400 : 201, r);
           }
 
