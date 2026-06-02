@@ -6,3 +6,5 @@ node_modules
 dist
 *.ignore.*
 .*/
+# binário compilado do backend C++
+cpp/marido
